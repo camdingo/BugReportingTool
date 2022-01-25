@@ -3,45 +3,31 @@
 #include <QVector>
 #include <QAbstractItemModel>
 
+#include "BRData.h"
+
 class BRModel: public QAbstractItemModel
 {
 public:
 
-	enum PRIORITY {
-		LOW,
-		MEDIUM,
-		HIGH,
-		BLOCKER
-	};
-
-	enum ISSUE_TYPE {
-		DR
-	};
-
-
 	BRModel();
 
-	BRModel(QWidget * _parent, QUuid _uuid, QString _summary, QString _assignee, QString _reporter,
-			ISSUE_TYPE _issueType, QString _description, PRIORITY _priority);
+	BRModel(int rowCount, int colCount);
 
+	//Pure Virtual Functions
 	virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
 	virtual QModelIndex parent(const QModelIndex& index) const;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 	virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
+	// Override Virtual Functions
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+	Qt::ItemFlags flags(const QModelIndex& index) const override;
+
 private:
-	QWidget* _parent;
-
-	QUuid _uuid;
-	QString _summary;
-	QString _assignee;
-	QString _reporter;
-	ISSUE_TYPE _issueType;
-	QString _description;
-	PRIORITY _priority;
-
-	//The attachments can hold locations of logs/videos/screencaps
-	QVector<QString> _attachments;
+	std::vector<BRData> _data;
+	int _rowCount;
+	int _colCount;
 
 };

@@ -13,16 +13,22 @@
 #include <QCloseEvent>
 #include <QLineEdit>
 #include <QCompleter>
+#include <QTableView>
 
 BRWindow::BRWindow()
 	:	_issuePending(false)
 {
 	init();
-	_model.reset(new BRModel);
+
+	//load all issues
 }
 
 void BRWindow::init()
 {
+	_model.reset(new BRModel);
+
+	resize(1280, 720);
+
 	createMenuBar();
 	createStatusBar();
 	createLayout();
@@ -72,12 +78,15 @@ void BRWindow::createMenuBar()
 {
 	_fileMenu = new QMenu("&File");
 	_createIssueAction = new QAction("Create Issue");
+	_exportIssuesAction = new QAction("Export Issues");
 	_exitAppAction = new QAction("Exit");
 	
 	_fileMenu->addAction(_createIssueAction);
+	_fileMenu->addAction(_exportIssuesAction);
 	_fileMenu->addAction(_exitAppAction);
 
 	connect(_createIssueAction, SIGNAL(triggered()), this, SLOT(createIssueButtonPressed()));
+	connect(_exportIssuesAction, SIGNAL(triggered()), this, SLOT(exportIssuesButtonPressed()));
 	connect(_exitAppAction, SIGNAL(triggered()), this, SLOT(close()));
 
 
@@ -105,7 +114,10 @@ void BRWindow::createLayout()
 	_searchBar->setCompleter(_completer);
 	layout->addWidget(_searchBar);
 
+	QTableView* issueTable = new QTableView(this);
+	issueTable->setModel(_model.get());
 
+	layout->addWidget(issueTable);
 
 	mainWidget->setLayout(layout);
 	setCentralWidget(mainWidget);
@@ -121,4 +133,9 @@ void BRWindow::createIssueButtonPressed()
 void BRWindow::createIssue()
 {
 
+}
+
+void BRWindow::exportIssuesButtonPressed()
+{
+	//Gather all data items and create the csv files for export
 }

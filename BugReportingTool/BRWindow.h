@@ -16,6 +16,7 @@ public:
 
 private slots:
 	void createIssueButtonPressed();
+	void exportIssuesButtonPressed();
 	void closeEvent(QCloseEvent* event);
 
 private:
@@ -24,7 +25,10 @@ private:
 	void createStatusBar();
 	void createLayout();
 
+	void loadIssues();
+
 	void createIssue();
+
 
 	//TODO implement in Phase 2
 	//void deleteIssue();
@@ -35,6 +39,7 @@ private:
 	//Menu Bar
 	QMenu *	_fileMenu;
 	QAction *_createIssueAction;
+	QAction* _exportIssuesAction;
 	QAction *_exitAppAction;
 
 	//Search box

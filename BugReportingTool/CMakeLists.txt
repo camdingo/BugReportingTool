@@ -11,6 +11,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+find_package(Boost 1.77.0 COMPONENTS all)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 set ( CXX_SRCS
@@ -22,6 +23,7 @@ set ( CXX_SRCS
 
 include_directories(
 	"D:/Code/vcpkg/Microsoft/vcpkg/installed/x64-windows/include/qt5"
+	"D:/Code/vcpkg/Microsoft/vcpkg/installed/x64-windows/include/boost"
 )
 
 # Add source to this project's executable.

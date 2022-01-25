@@ -6,15 +6,19 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QPushButton>
 #include <QAction>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QLineEdit>
+#include <QCompleter>
 
 BRWindow::BRWindow()
-	:_issuePending(false)
+	:	_issuePending(false)
 {
 	init();
+	_model.reset(new BRModel);
 }
 
 void BRWindow::init()
@@ -26,7 +30,7 @@ void BRWindow::init()
 
 void BRWindow::closeEvent(QCloseEvent* event)
 {
-	QMessageBox msgBox;
+	QMessageBox msgBox(this);
 
 	if (_issuePending)
 	{
@@ -88,11 +92,20 @@ void BRWindow::createStatusBar()
 void BRWindow::createLayout() 
 {
 	QWidget* mainWidget = new QWidget(this);
-	QVBoxLayout* layout = new QVBoxLayout();
-	_createIssueButton = new QPushButton("Create New Issue");
-	connect(_createIssueButton, SIGNAL(clicked()), this, SLOT(createIssueButtonPressed()));
+	QHBoxLayout* layout = new QHBoxLayout();
+	//_createIssueButton = new QPushButton("Create New Issue");
+	//connect(_createIssueButton, SIGNAL(clicked()), this, SLOT(createIssueButtonPressed()));
 
-	layout->addWidget(_createIssueButton);
+	//layout->addWidget(_createIssueButton);
+
+	_completer = new QCompleter(this);
+	_completer->setModel(_model.get());
+
+	_searchBar = new QLineEdit(this);
+	_searchBar->setCompleter(_completer);
+	layout->addWidget(_searchBar);
+
+
 
 	mainWidget->setLayout(layout);
 	setCentralWidget(mainWidget);
@@ -101,6 +114,7 @@ void BRWindow::createLayout()
 void BRWindow::createIssueButtonPressed()
 {
 	qDebug() << "Create new issue button pressed";
+
 }
 
 

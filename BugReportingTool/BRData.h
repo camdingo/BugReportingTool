@@ -1,3 +1,6 @@
+#ifndef _BRDATA_
+#define _BRDATA_
+
 #include <QString>
 #include <QUuid>
 #include <QVector>
@@ -53,3 +56,5 @@ private:
 	QVector<QString> _attachments;
 
 };
+
+#endif // _BRDATA_

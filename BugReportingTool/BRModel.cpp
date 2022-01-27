@@ -1,5 +1,5 @@
 #include "BRModel.h"
-
+#include <iostream>
 BRModel::BRModel()
 	: _rowCount(0)
 	, _colCount(0)
@@ -26,17 +26,32 @@ QModelIndex BRModel::parent(const QModelIndex& index) const
 
 int BRModel::rowCount(const QModelIndex& parent) const 
 {
-	return 0;
+	return _data.size();
 }
 
 int BRModel::columnCount(const QModelIndex& parent) const
 {
-	return 0;
+	return 2;
 }
 
 QVariant BRModel::data(const QModelIndex& index, int role) const
 {
-	return 0;
+	std::cout << "test0: " << std::endl;
+	if (!index.isValid())
+		return QVariant();
+	std::cout << "test0: " << std::endl;
+	if (index.row() < 0)
+		return QVariant();
+	std::cout << "test2: " << std::endl;
+	if (role == Qt::DisplayRole) {
+		BRData issue = _data[index.row()-1];
+		std::cout << "test: " << issue.getSummary().toStdString() << std::endl;
+		if (index.column() == 0)
+			return issue.getUuid();
+		else if (index.column() == 1)
+			return issue.getSummary();
+	}
+	return QVariant();
 }
 
 Qt::ItemFlags BRModel::flags(const QModelIndex& index) const 
@@ -48,84 +63,56 @@ Qt::ItemFlags BRModel::flags(const QModelIndex& index) const
 
 }
 
-bool BRModel::setData(const QModelIndex& index, const QVariant& value, int role)
+QVariant BRModel::headerData(int section, Qt::Orientation orientation, int role) const 
 {
+	if (role != Qt::DisplayRole)
+		return QVariant();
 
-	bool result = false;
-
-	if (index.isValid() && role == Qt::EditRole) 
+	switch (section)
 	{
+		case 0:
+			return tr("Issue #");
 
-		index.row(), index.column();
+		case 1:
+			return tr("Summary");
 
-		int row = index.row();
-		int column = index.column();
-
-
-		switch (column) 
-		{
-
-			case 0:
-				//_data.at(row).setName(value.toString());
-				break;
-
-			case 1:
-				//_data.at(row).setAge(value.toInt());
-				break;
-
-			default:
-				break;
-
-		} // end switch column
-
-		emit dataChanged(index, index);
-
-		result = true;
-
+		default:
+			return QVariant();
 	}
 
-	return result;
+	return QVariant();
+
 
 }
 
-QVariant BRModel::headerData(int section, Qt::Orientation orientation, int role) const {
+bool BRModel::insertRows(int position, int rows, const QModelIndex& index)
+{
+	Q_UNUSED(index);
+	beginInsertRows(QModelIndex(), position, position + rows - 1);
 
-	QVariant result = QVariant();
-
-	if (Qt::DisplayRole == role && Qt::Horizontal == orientation) 
-	{
-		switch (section) 
-		{
-
-			case 0:
-				result = "Hello";
-				break;
-
-			default:
-				break;
-
-		}
-
-	}
-	else if (Qt::DisplayRole == role && Qt::Vertical == orientation) 
-	{ 
-
-		switch (section) 
-		{
-			case 0:
-				result = "Welcome";
-				break;
-
-			default:
-				break;
-
-		}
-
-	}
-	else {
+	for (int row = 0; row < rows; row++) {
 
 	}
 
-	return result;
+	endInsertRows();
+	return true;
+}
 
+bool BRModel::removeRows(int position, int rows, const QModelIndex& index)
+{
+	Q_UNUSED(index);
+	beginRemoveRows(QModelIndex(), position, position + rows - 1);
+
+	for (int row = 0; row < rows; ++row) {
+		
+	}
+
+	endRemoveRows();
+	return true;
+}
+
+
+void BRModel::addIssue(BRData issue)
+{
+	_data.push_back(issue);
 }

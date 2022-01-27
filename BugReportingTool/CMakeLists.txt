@@ -11,13 +11,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Boost 1.77.0 COMPONENTS all)
+find_package(Boost 1.77.0 COMPONENTS filesystem thread system)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 set ( CXX_SRCS
 	BRTool.cpp
 	BRWindow.cpp
 	BRModel.cpp
+	BRData.cpp
 	BRController.cpp
 )
 

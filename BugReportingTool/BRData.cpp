@@ -15,8 +15,7 @@ BRData::BRData()
 
 BRData::BRData(QUuid uuid, QString summary, QString assignee, QString reporter,
 	ISSUE_TYPE issueType, QString description, PRIORITY priority)
-	: _parent(parent)
-	, _uuid(uuid)
+	:  _uuid(uuid)
 	, _summary(summary)
 	, _assignee(assignee)
 	, _reporter(reporter)

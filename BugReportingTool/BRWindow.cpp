@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include <QMainWindow>
+#include <QSettings>
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QVBoxLayout>
@@ -14,24 +15,40 @@
 #include <QLineEdit>
 #include <QCompleter>
 #include <QTableView>
+#include <QTextEdit>
+#include <QHeaderView>
 
 BRWindow::BRWindow()
+	: _issuePending(false)
+{
+	init();
+}
+
+BRWindow::BRWindow(std::shared_ptr<BRModel> model)
 	:	_issuePending(false)
 {
 	init();
 
-	//load all issues
+	_completer->setModel(model.get());
+	_issueTable->setModel(model.get());
+
+}
+
+BRWindow::~BRWindow()
+{
+	savePositionSize();
 }
 
 void BRWindow::init()
 {
-	_model.reset(new BRModel);
-
-	resize(1280, 720);
+	loadPositionSize();
 
 	createMenuBar();
 	createStatusBar();
 	createLayout();
+
+	//Remove later
+	//drawRedBorder(1000, 500, 600, 300);
 }
 
 void BRWindow::closeEvent(QCloseEvent* event)
@@ -72,6 +89,41 @@ void BRWindow::closeEvent(QCloseEvent* event)
 		//saveIssue();
 		_issuePending = false;
 	}
+
+	savePositionSize();
+}
+
+void BRWindow::savePositionSize()
+{
+	QSettings qsettings("SAGE", "BugReportTool");
+
+	qsettings.beginGroup("BRWindow");
+
+	qsettings.setValue("geometry", saveGeometry());
+	qsettings.setValue("savestate", saveState());
+	qsettings.setValue("maximized", isMaximized());
+	if (!isMaximized()) {
+		qsettings.setValue("pos", pos());
+		qsettings.setValue("size", size());
+	}
+
+	qsettings.endGroup();
+}
+
+void BRWindow::loadPositionSize()
+{
+	QSettings qsettings("SAGE", "BugReportTool");
+
+	qsettings.beginGroup("mainwindow");
+
+	restoreGeometry(qsettings.value("geometry", saveGeometry()).toByteArray());
+	restoreState(qsettings.value("savestate", saveState()).toByteArray());
+	move(qsettings.value("pos", pos()).toPoint());
+	resize(qsettings.value("size", size()).toSize());
+	if (qsettings.value("maximized", isMaximized()).toBool())
+		showMaximized();
+
+	qsettings.endGroup();
 }
 
 void BRWindow::createMenuBar()
@@ -101,25 +153,29 @@ void BRWindow::createStatusBar()
 void BRWindow::createLayout() 
 {
 	QWidget* mainWidget = new QWidget(this);
-	QHBoxLayout* layout = new QHBoxLayout();
-	//_createIssueButton = new QPushButton("Create New Issue");
-	//connect(_createIssueButton, SIGNAL(clicked()), this, SLOT(createIssueButtonPressed()));
-
-	//layout->addWidget(_createIssueButton);
+	QVBoxLayout* vlayout = new QVBoxLayout();
 
 	_completer = new QCompleter(this);
-	_completer->setModel(_model.get());
 
 	_searchBar = new QLineEdit(this);
 	_searchBar->setCompleter(_completer);
-	layout->addWidget(_searchBar);
+	vlayout->addWidget(_searchBar);
 
-	QTableView* issueTable = new QTableView(this);
-	issueTable->setModel(_model.get());
+	_issueTable = new QTableView(this);
+	_issueTable->horizontalHeader()->setStretchLastSection(true);
+	_issueTable->verticalHeader()->hide();
 
-	layout->addWidget(issueTable);
+	vlayout->addWidget(_issueTable);
 
-	mainWidget->setLayout(layout);
+	QHBoxLayout* hlayout = new QHBoxLayout();
+
+	_detailView = new QTextEdit(this);
+	_detailView->setDisabled(true);
+
+	hlayout->addLayout(vlayout);
+	hlayout->addWidget(_detailView);
+
+	mainWidget->setLayout(hlayout);
 	setCentralWidget(mainWidget);
 }
 
@@ -138,4 +194,28 @@ void BRWindow::createIssue()
 void BRWindow::exportIssuesButtonPressed()
 {
 	//Gather all data items and create the csv files for export
+}
+
+void BRWindow::drawRedBorder(int xPos, int yPos, int width, int height)
+{
+	QFrame* frame = new QFrame();
+	frame->setFrameStyle(QFrame::Box | QFrame::Plain);
+	frame->setWindowFlags(	Qt::FramelessWindowHint 
+							| Qt::Tool 
+							| Qt::WindowTransparentForInput 
+							| Qt::WindowDoesNotAcceptFocus 
+							| Qt::WindowStaysOnTopHint);
+
+	frame->setGeometry(xPos, yPos, width, height);
+	
+	// Set a solid green thick border.
+	frame->setObjectName("testframe");
+	frame->setStyleSheet("#testframe {border: 5px solid red;}");
+
+	// IMPORTANT: A QRegion's coordinates are relative to the widget it's used in. This is not documented.
+	QRegion wholeFrameRegion(0, 0, width, height);
+	QRegion innerFrameRegion = wholeFrameRegion.subtracted(QRegion(5, 5, width - 10, height - 10));
+	frame->setMask(innerFrameRegion);
+	frame->setWindowOpacity(0.5);
+	frame->show();
 }

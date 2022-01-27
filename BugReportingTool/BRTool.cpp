@@ -2,7 +2,9 @@
 #include <QStyleFactory>
 #include <QApplication>
 
+#include "BRModel.h"
 #include "BRWindow.h"
+#include "BRController.h"
 
 using namespace std;
 
@@ -54,8 +56,13 @@ int main(int argc, char** argv)
 	QCoreApplication::setApplicationName("Bug Report Tool");
 	QCoreApplication::setApplicationVersion(QT_VERSION_STR);
 
-	BRWindow mainWindow;
-	mainWindow.show();
+
+	std::shared_ptr<BRModel> model = std::make_shared<BRModel>();
+	std::shared_ptr<BRWindow> mainWindow = std::make_shared<BRWindow>(model);
+
+	BRController controller(model, mainWindow);
+
+	mainWindow->show();
 
 	setStyle(&app);
 

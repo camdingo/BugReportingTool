@@ -1,11 +1,14 @@
+#ifndef _BRMODEL_
+#define _BRMODEL_
+
 #include <QString>
 #include <QUuid>
 #include <QVector>
-#include <QAbstractItemModel>
+#include <QAbstractTableModel>
 
 #include "BRData.h"
 
-class BRModel: public QAbstractItemModel
+class BRModel: public QAbstractTableModel
 {
 public:
 
@@ -22,8 +25,13 @@ public:
 
 	// Override Virtual Functions
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-	bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
+	bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
+	bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
+
+
+	void addIssue(BRData issue);
+
 
 private:
 	std::vector<BRData> _data;
@@ -31,3 +39,5 @@ private:
 	int _colCount;
 
 };
+
+#endif // _BRMODEL_

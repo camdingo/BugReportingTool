@@ -1,3 +1,6 @@
+#ifndef _BRWINDOW_
+#define _BRWINDOW_
+
 #include <QMainWindow>
 #include <memory>
 #include "BRModel.h"
@@ -6,6 +9,8 @@ class QPushButton;
 class QMenu;
 class QLineEdit;
 class QCompleter;
+class QTableView;
+class QTextEdit;
 
 class BRWindow : public QMainWindow
 {
@@ -13,6 +18,8 @@ class BRWindow : public QMainWindow
 
 public:
 	BRWindow();
+	BRWindow(std::shared_ptr<BRModel> model);
+	~BRWindow();
 
 private slots:
 	void createIssueButtonPressed();
@@ -21,21 +28,22 @@ private slots:
 
 private:
 	void init();
+
+	void savePositionSize();
+	void loadPositionSize();
+
 	void createMenuBar();
 	void createStatusBar();
 	void createLayout();
 
-	void loadIssues();
-
 	void createIssue();
 
+	void drawRedBorder(int xPos, int yPos, int width, int height);
 
 	//TODO implement in Phase 2
 	//void deleteIssue();
 	//void editIssue();
 	
-	std::shared_ptr<BRModel> _model;
-
 	//Menu Bar
 	QMenu *	_fileMenu;
 	QAction *_createIssueAction;
@@ -51,8 +59,14 @@ private:
 	QPushButton *_deleteIssueButton;
 	QPushButton *_editIssueButton;
 
+	//Table
+	QTableView *_issueTable;
 
+	//Detail View
+	QTextEdit *_detailView;
 
 	bool _issuePending;
 
 };
+
+#endif //_BRWINDOW_

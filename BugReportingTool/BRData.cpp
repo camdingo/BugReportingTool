@@ -1,7 +1,7 @@
 #include "BRData.h"
 
 BRData::BRData()
-	: _uuid(0)
+	: _issueNumber(0)
 	, _summary("TBD")
 	, _assignee("TBD")
 	, _reporter("TBD")
@@ -13,9 +13,9 @@ BRData::BRData()
 }
 
 
-BRData::BRData(QUuid uuid, QString summary, QString assignee, QString reporter,
+BRData::BRData(quint32 issueNumber, QString summary, QString assignee, QString reporter,
 	ISSUE_TYPE issueType, QString description, PRIORITY priority)
-	:  _uuid(uuid)
+	:  _issueNumber(issueNumber)
 	, _summary(summary)
 	, _assignee(assignee)
 	, _reporter(reporter)

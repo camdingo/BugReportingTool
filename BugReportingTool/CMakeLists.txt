@@ -20,6 +20,7 @@ set ( CXX_SRCS
 	BRModel.cpp
 	BRData.cpp
 	BRController.cpp
+	BRCreateDialog.cpp
 )
 
 include_directories(

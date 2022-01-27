@@ -21,12 +21,22 @@ void BRController::loadIssues()
 
 
 	//TESTING
-	BRData data(QUuid(), "Test Summary", "cameron", "rob",
-		BRData::ISSUE_TYPE::DR, "this thing is broken", BRData::PRIORITY::BLOCKER);
 
-	_model->addIssue(data);
+	for (int i = 0; i < 20; ++i)
+	{
+		BRData data(i, "Test Summary", "cameron", "rob",
+			BRData::ISSUE_TYPE::DR, "this thing is broken", BRData::PRIORITY::BLOCKER);
+
+		_model->addIssue(data);
+	}
+
 }
 
+
+void BRController::saveIssue()
+{
+
+}
 
 //Use this to capture output from calling xwininfo
 //std::string exec(const char* cmd) 

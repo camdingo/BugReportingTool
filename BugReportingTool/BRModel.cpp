@@ -1,5 +1,5 @@
 #include "BRModel.h"
-#include <iostream>
+
 BRModel::BRModel()
 	: _rowCount(0)
 	, _colCount(0)
@@ -11,17 +11,6 @@ BRModel::BRModel(int rowCount, int colCount)
 	: _rowCount(rowCount)
 	, _colCount(colCount)
 {
-}
-
-QModelIndex BRModel::index(int row, int column, const QModelIndex& parent) const
-{
-	QModelIndex index;
-	return index;
-}
-
-QModelIndex BRModel::parent(const QModelIndex& index) const
-{
-	return QModelIndex();
 }
 
 int BRModel::rowCount(const QModelIndex& parent) const 
@@ -36,18 +25,18 @@ int BRModel::columnCount(const QModelIndex& parent) const
 
 QVariant BRModel::data(const QModelIndex& index, int role) const
 {
-	std::cout << "test0: " << std::endl;
 	if (!index.isValid())
 		return QVariant();
-	std::cout << "test0: " << std::endl;
+
 	if (index.row() < 0)
 		return QVariant();
-	std::cout << "test2: " << std::endl;
-	if (role == Qt::DisplayRole) {
-		BRData issue = _data[index.row()-1];
-		std::cout << "test: " << issue.getSummary().toStdString() << std::endl;
+
+	if (role == Qt::DisplayRole) 
+	{
+		BRData issue = _data[index.row()];
+
 		if (index.column() == 0)
-			return issue.getUuid();
+			return issue.getIssueNumber();
 		else if (index.column() == 1)
 			return issue.getSummary();
 	}
@@ -91,7 +80,7 @@ bool BRModel::insertRows(int position, int rows, const QModelIndex& index)
 	beginInsertRows(QModelIndex(), position, position + rows - 1);
 
 	for (int row = 0; row < rows; row++) {
-
+		
 	}
 
 	endInsertRows();

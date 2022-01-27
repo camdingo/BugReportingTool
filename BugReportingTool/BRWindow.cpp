@@ -18,14 +18,15 @@
 #include <QTextEdit>
 #include <QHeaderView>
 
+#include "BRCreateDialog.h"
+
 BRWindow::BRWindow()
-	: _issuePending(false)
 {
 	init();
+
 }
 
 BRWindow::BRWindow(std::shared_ptr<BRModel> model)
-	:	_issuePending(false)
 {
 	init();
 
@@ -55,40 +56,15 @@ void BRWindow::closeEvent(QCloseEvent* event)
 {
 	QMessageBox msgBox(this);
 
-	if (_issuePending)
-	{
-		msgBox.setText("The document has been modified.");
-		msgBox.setInformativeText("Do you want to save your changes?");
-		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-		msgBox.setDefaultButton(QMessageBox::Save);
-	}
-	else
-	{
-		msgBox.setText("Are you sure you want to exit?");
-		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-		msgBox.setDefaultButton(QMessageBox::Yes);
-	}
+	msgBox.setText("Are you sure you want to exit?");
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.setDefaultButton(QMessageBox::Yes);
 
 	int ret = msgBox.exec();
 
-	if (ret == QMessageBox::Cancel
-		|| ret == QMessageBox::No)
-	{
+	if (ret == QMessageBox::No)
 		event->ignore();
-	}
-	else if (ret == QMessageBox::Discard)
-	{
-		//special handle for clearing the form
-	}
-	else if (ret == QMessageBox::Yes)
-	{
 
-	}
-	else if (ret == QMessageBox::Save)
-	{
-		//saveIssue();
-		_issuePending = false;
-	}
 
 	savePositionSize();
 }
@@ -164,6 +140,8 @@ void BRWindow::createLayout()
 	_issueTable = new QTableView(this);
 	_issueTable->horizontalHeader()->setStretchLastSection(true);
 	_issueTable->verticalHeader()->hide();
+	_issueTable->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+	_issueTable->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 
 	vlayout->addWidget(_issueTable);
 
@@ -182,9 +160,18 @@ void BRWindow::createLayout()
 void BRWindow::createIssueButtonPressed()
 {
 	qDebug() << "Create new issue button pressed";
+	BRCreateDialog* createIssueDialog = new BRCreateDialog(this);
+	connect(createIssueDialog, SIGNAL(finished(BRData)), this, SLOT(dialogIsFinished(BRData)));
 
+
+
+	createIssueDialog->exec();
 }
 
+void BRWindow::dialogIsFinished(BRData issue)
+{
+	qDebug() << "Create dialog closed";
+}
 
 void BRWindow::createIssue()
 {

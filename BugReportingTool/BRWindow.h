@@ -2,8 +2,9 @@
 #define _BRWINDOW_
 
 #include <QMainWindow>
-#include <memory>
+
 #include "BRModel.h"
+#include "BRData.h"
 
 class QPushButton;
 class QMenu;
@@ -11,6 +12,7 @@ class QLineEdit;
 class QCompleter;
 class QTableView;
 class QTextEdit;
+
 
 class BRWindow : public QMainWindow
 {
@@ -25,6 +27,7 @@ private slots:
 	void createIssueButtonPressed();
 	void exportIssuesButtonPressed();
 	void closeEvent(QCloseEvent* event);
+	void dialogIsFinished(BRData);
 
 private:
 	void init();
@@ -64,8 +67,6 @@ private:
 
 	//Detail View
 	QTextEdit *_detailView;
-
-	bool _issuePending;
 
 };
 

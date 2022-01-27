@@ -2,8 +2,8 @@
 #define _BRDATA_
 
 #include <QString>
-#include <QUuid>
 #include <QVector>
+#include <QMetaType>
 
 class BRData
 {
@@ -22,11 +22,11 @@ public:
 
 	BRData();
 
-	BRData(QUuid _uuid, QString _summary, QString _assignee, QString _reporter,
-			ISSUE_TYPE _issueType, QString _description, PRIORITY _priority);
+	BRData(quint32 issueNumber, QString summary, QString assignee, QString reporter,
+			ISSUE_TYPE issueType, QString description, PRIORITY priority);
 
 	//Setters
-	QUuid setUuid(QUuid uuid) {_uuid = uuid; }
+	quint32 setIssueNumber(quint32 issueNumber) {_issueNumber = issueNumber; }
 	QString setSummary(QString summary) { _summary = summary; }
 	QString setAssignee(QString assignee) { _assignee = assignee; }
 	QString setReporter(QString reporter) { _reporter = reporter; }
@@ -35,7 +35,7 @@ public:
 	PRIORITY setPriority(PRIORITY priority) { _priority = priority; }
 
 	//Getters
-	QUuid getUuid() { return _uuid; }
+	quint32 getIssueNumber() { return _issueNumber; }
 	QString getSummary() { return _summary; }
 	QString getAssignee() { return _assignee; }
 	QString getReporter() { return _reporter; }
@@ -44,7 +44,7 @@ public:
 	PRIORITY getPriority() { return _priority; }
 
 private:
-	QUuid _uuid;
+	quint32 _issueNumber;
 	QString _summary;
 	QString _assignee;
 	QString _reporter;
@@ -56,5 +56,7 @@ private:
 	QVector<QString> _attachments;
 
 };
+
+Q_DECLARE_METATYPE(BRData);
 
 #endif // _BRDATA_

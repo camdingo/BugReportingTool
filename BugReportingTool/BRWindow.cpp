@@ -163,8 +163,6 @@ void BRWindow::createIssueButtonPressed()
 	BRCreateDialog* createIssueDialog = new BRCreateDialog(this);
 	connect(createIssueDialog, SIGNAL(finished(BRData)), this, SLOT(dialogIsFinished(BRData)));
 
-
-
 	createIssueDialog->exec();
 }
 

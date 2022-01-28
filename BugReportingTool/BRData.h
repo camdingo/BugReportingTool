@@ -4,6 +4,8 @@
 #include <QString>
 #include <QVector>
 #include <QMetaType>
+#include <QDateTime>
+
 
 class BRData
 {
@@ -51,6 +53,7 @@ private:
 	ISSUE_TYPE _issueType;
 	QString _description;
 	PRIORITY _priority;
+	QDateTime _creationDate;
 
 	//The attachments can hold locations of logs/videos/screencaps
 	QVector<QString> _attachments;

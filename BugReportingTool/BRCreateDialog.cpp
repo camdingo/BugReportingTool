@@ -2,6 +2,9 @@
 
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QLabel>
 
 #include "BRData.h"
 
@@ -11,6 +14,17 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	,	_formModified(false)
 {
 	qRegisterMetaType<BRData>("BRData");
+
+	QVBoxLayout* mainLayout = new QVBoxLayout();
+
+	QLabel* summaryLabel = new QLabel("Summary");
+	_summary = new QLineEdit(this);
+
+	mainLayout->addWidget(summaryLabel);
+	mainLayout->addWidget(_summary);
+
+	setLayout(mainLayout);
+	
 }
 
 BRCreateDialog::~BRCreateDialog()

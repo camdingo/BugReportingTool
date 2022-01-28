@@ -5,6 +5,9 @@
 
 #include "BRData.h"
 
+class QLineEdit;
+class QComboBox;
+
 class BRCreateDialog : public QDialog
 {
 	Q_OBJECT
@@ -21,6 +24,14 @@ private:
 	virtual void closeEvent(QCloseEvent* event);
 
 	bool _formModified;
+
+	//Entry fields
+	QLineEdit* _summary;
+	QLineEdit* _description;
+	QComboBox* _string;
+	QComboBox* _priority;
+
+
 };
 
 #endif

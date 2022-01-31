@@ -1,5 +1,6 @@
 #include "BRModel.h"
 
+#include <QDebug>
 BRModel::BRModel()
 	: _rowCount(0)
 	, _colCount(0)
@@ -104,4 +105,28 @@ bool BRModel::removeRows(int position, int rows, const QModelIndex& index)
 void BRModel::addIssue(BRData issue)
 {
 	_data.push_back(issue);
+}
+
+QString BRModel::getDetails(int row)
+{
+	QString details;
+	details += QString("<b>Issue #: </b>") + QString::number(_data[row].getIssueNumber()) + QString("<br/>");
+	details += QString("<b>Summary: </b>") + _data[row].getSummary() + QString("<br/>");
+
+	details += QString("<br/><br/><br/>");
+
+	details += QString("<b>Creation Date: </b>") + _data[row].getCreationDate().toString() + QString("<br/>");
+	details += QString("<b>Affected Version: </b>") + _data[row].getAffectedVersion() + QString("<br/>");
+	details += QString("<b>String: </b>") + _data[row].getStringName() + QString("<br/>");
+	details += QString("<b>Originator: </b>") + _data[row].getOriginator() + QString("<br/>");
+
+	details += QString("<b>Component: </b>") + _data[row].getComponent() + QString("<br/>");
+	details += QString("<b>Category: </b>") + _data[row].getCategoryStr() + QString("<br/>");
+	details += QString("<b>Priority: </b>") + _data[row].getPriorityStr() + QString("<br/>");
+
+	details += QString("<br/>");
+
+	details += QString("<b>Description: </b>") + _data[row].getDescription() + QString("<br/>");
+
+	return QString("<html> <body style='color:white'>") + details + QString("< / body> < / html>");
 }

@@ -4,9 +4,12 @@
 #include <QDialog>
 
 #include "BRData.h"
+#include "screenshotVideoWidget.h"
 
 class QLineEdit;
+class QTextEdit;
 class QComboBox;
+class QListWidget;
 
 class BRCreateDialog : public QDialog
 {
@@ -16,9 +19,16 @@ public:
 	BRCreateDialog(QWidget* parent);
 	~BRCreateDialog();
 
+	void createConnections();
+	BRData getPendingIssue() { return _pendingIssue; }
+
+	void generatePendingIssue();
 
 signals:
-	void finished(BRData);
+
+public slots:
+	void formModifiedHandler();
+	void createIssueClicked();
 
 private:
 	virtual void closeEvent(QCloseEvent* event);
@@ -27,11 +37,18 @@ private:
 
 	//Entry fields
 	QLineEdit* _summary;
-	QLineEdit* _description;
+	QTextEdit* _description;
 	QComboBox* _string;
 	QComboBox* _priority;
 
+	ScreenShotVideoWidget* _ssvWidget;
 
+	QPushButton* _addScreenshotButton;
+	QPushButton* _addVideoButton;
+	QPushButton* _createIssueButton;
+
+	//Exported data
+	BRData _pendingIssue;
 };
 
 #endif

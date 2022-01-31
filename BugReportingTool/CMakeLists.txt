@@ -21,6 +21,7 @@ set ( CXX_SRCS
 	BRData.cpp
 	BRController.cpp
 	BRCreateDialog.cpp
+	screenshotVideoWidget.cpp
 )
 
 include_directories(

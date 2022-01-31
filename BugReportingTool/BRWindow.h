@@ -5,13 +5,14 @@
 
 #include "BRModel.h"
 #include "BRData.h"
+#include "BRCreateDialog.h"
 
 class QPushButton;
 class QMenu;
 class QLineEdit;
 class QCompleter;
 class QTableView;
-class QTextEdit;
+class QTextBrowser;
 
 
 class BRWindow : public QMainWindow
@@ -23,11 +24,17 @@ public:
 	BRWindow(std::shared_ptr<BRModel> model);
 	~BRWindow();
 
+	void setDetailView(QString);
+
 private slots:
 	void createIssueButtonPressed();
 	void exportIssuesButtonPressed();
-	void closeEvent(QCloseEvent* event);
-	void dialogIsFinished(BRData);
+	void closeEvent(QCloseEvent*);
+	void dialogIsFinished(int);
+	void onTableClicked(const QModelIndex&);
+
+signals:
+	void getDetailedView(int);
 
 private:
 	void init();
@@ -46,6 +53,9 @@ private:
 	//TODO implement in Phase 2
 	//void deleteIssue();
 	//void editIssue();
+
+
+	BRCreateDialog* _createIssueDialog;
 	
 	//Menu Bar
 	QMenu *	_fileMenu;
@@ -66,7 +76,7 @@ private:
 	QTableView *_issueTable;
 
 	//Detail View
-	QTextEdit *_detailView;
+	QTextBrowser *_detailView;
 
 };
 

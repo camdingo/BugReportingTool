@@ -5,12 +5,28 @@ BRController::BRController(std::shared_ptr<BRModel> model, std::shared_ptr<BRWin
 	_model = model;
 	_view = view;
 
+	createConnections();
+
 	loadIssues();
+
+
 }
 
 BRController::~BRController()
 {
 
+}
+
+void BRController::createConnections()
+{
+	connect(_view.get(), SIGNAL(getDetailedView(int)), this, SLOT(getDetails(int)));
+}
+
+void BRController::getDetails(int row)
+{
+	QString details = _model->getDetails(row);
+
+	_view->setDetailView(details);
 }
 
 void BRController::loadIssues()
@@ -22,13 +38,19 @@ void BRController::loadIssues()
 
 	//TESTING
 
-	for (int i = 0; i < 20; ++i)
+	for (quint32 i = 0; i < 20; ++i)
 	{
-		BRData data(i, "Test Summary", "cameron", "rob",
-			BRData::ISSUE_TYPE::DR, "this thing is broken", BRData::PRIORITY::BLOCKER);
+		BRData test(i, "SAGE", "Component crashed", "cameron", "rob", "21.1", "engineering","domes", 
+			BRData::ISSUE_TYPE::DR, "backend", "exe crashed", BRData::PRIORITY::BLOCKER, BRData::CATEGORY::CRASH);
 
-		_model->addIssue(data);
+		_model->addIssue(test);
+
+		
 	}
+
+	_model->setLastIssueNumber(19);
+
+	//need to set highest issue number when loading
 
 }
 

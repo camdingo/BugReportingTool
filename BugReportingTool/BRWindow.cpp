@@ -15,7 +15,7 @@
 #include <QLineEdit>
 #include <QCompleter>
 #include <QTableView>
-#include <QTextEdit>
+#include <QTextBrowser>
 #include <QHeaderView>
 
 #include "BRCreateDialog.h"
@@ -33,6 +33,7 @@ BRWindow::BRWindow(std::shared_ptr<BRModel> model)
 	_completer->setModel(model.get());
 	_issueTable->setModel(model.get());
 
+	resize(1280, 720);
 }
 
 BRWindow::~BRWindow()
@@ -142,12 +143,15 @@ void BRWindow::createLayout()
 	_issueTable->verticalHeader()->hide();
 	_issueTable->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 	_issueTable->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+	_issueTable->setAlternatingRowColors(true);
+
+	connect(_issueTable, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
 
 	vlayout->addWidget(_issueTable);
 
 	QHBoxLayout* hlayout = new QHBoxLayout();
 
-	_detailView = new QTextEdit(this);
+	_detailView = new QTextBrowser(this);
 	_detailView->setDisabled(true);
 
 	hlayout->addLayout(vlayout);
@@ -157,18 +161,31 @@ void BRWindow::createLayout()
 	setCentralWidget(mainWidget);
 }
 
-void BRWindow::createIssueButtonPressed()
+void BRWindow::onTableClicked(const QModelIndex& index)
 {
-	qDebug() << "Create new issue button pressed";
-	BRCreateDialog* createIssueDialog = new BRCreateDialog(this);
-	connect(createIssueDialog, SIGNAL(finished(BRData)), this, SLOT(dialogIsFinished(BRData)));
-
-	createIssueDialog->exec();
+	if (index.isValid()) 
+	{
+		emit getDetailedView(index.row());
+	}
 }
 
-void BRWindow::dialogIsFinished(BRData issue)
+void BRWindow::setDetailView(QString details)
 {
-	qDebug() << "Create dialog closed";
+	_detailView->setHtml(details);
+}
+
+void BRWindow::createIssueButtonPressed()
+{
+	_createIssueDialog = new BRCreateDialog(this);
+	connect(_createIssueDialog, SIGNAL(finished(int)), this, SLOT(dialogIsFinished(int)));
+
+	_createIssueDialog->exec();
+}
+
+void BRWindow::dialogIsFinished(int result)
+{
+	//Still needs id info
+	BRData pendingIssue = _createIssueDialog->getPendingIssue();
 }
 
 void BRWindow::createIssue()

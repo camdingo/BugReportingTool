@@ -27,15 +27,19 @@ public:
 	bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
 	bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
 
-
+	//setters
 	void addIssue(BRData issue);
+	void setLastIssueNumber(int lastIssueNumber) { _lastIssueNumber = lastIssueNumber; }
 
+	//getters
+	QString getDetails(int row);
+	int getLastIssueNumber() { return _lastIssueNumber; }
 
 private:
 	std::vector<BRData> _data;
 	int _rowCount;
 	int _colCount;
-
+	int _lastIssueNumber;
 };
 
 #endif // _BRMODEL_

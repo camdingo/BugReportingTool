@@ -2,16 +2,8 @@
 
 #include <QDebug>
 BRModel::BRModel()
-	: _rowCount(0)
-	, _colCount(0)
 {
 
-}
-
-BRModel::BRModel(int rowCount, int colCount)
-	: _rowCount(rowCount)
-	, _colCount(colCount)
-{
 }
 
 int BRModel::rowCount(const QModelIndex& parent) const 
@@ -75,36 +67,38 @@ QVariant BRModel::headerData(int section, Qt::Orientation orientation, int role)
 
 }
 
-bool BRModel::insertRows(int position, int rows, const QModelIndex& index)
-{
-	Q_UNUSED(index);
-	beginInsertRows(QModelIndex(), position, position + rows - 1);
-
-	for (int row = 0; row < rows; row++) {
-		
-	}
-
-	endInsertRows();
-	return true;
-}
-
-bool BRModel::removeRows(int position, int rows, const QModelIndex& index)
-{
-	Q_UNUSED(index);
-	beginRemoveRows(QModelIndex(), position, position + rows - 1);
-
-	for (int row = 0; row < rows; ++row) {
-		
-	}
-
-	endRemoveRows();
-	return true;
-}
+//bool BRModel::insertRows(int position, int rows, const QModelIndex& index)
+//{
+//	Q_UNUSED(index);
+//	beginInsertRows(QModelIndex(), position, position + rows - 1);
+//
+//	for (int row = 0; row < rows; row++) {
+//		
+//	}
+//
+//	endInsertRows();
+//	return true;
+//}
+//
+//bool BRModel::removeRows(int position, int rows, const QModelIndex& index)
+//{
+//	Q_UNUSED(index);
+//	beginRemoveRows(QModelIndex(), position, position + rows - 1);
+//
+//	for (int row = 0; row < rows; ++row) {
+//		
+//	}
+//
+//	endRemoveRows();
+//	return true;
+//}
 
 
 void BRModel::addIssue(BRData issue)
 {
+	beginInsertRows(QModelIndex(), 0, _data.size());
 	_data.push_back(issue);
+	endInsertRows();
 }
 
 QString BRModel::getDetails(int row)

@@ -37,9 +37,12 @@ private:
 
 	//Entry fields
 	QLineEdit* _summary;
+	QLineEdit* _affectedVersion;
 	QTextEdit* _description;
 	QComboBox* _string;
 	QComboBox* _priority;
+	QComboBox* _component;
+	QComboBox* _category;
 
 	ScreenShotVideoWidget* _ssvWidget;
 
@@ -51,4 +54,4 @@ private:
 	BRData _pendingIssue;
 };
 
-#endif
+#endif // _BRCREATEDIALOG_

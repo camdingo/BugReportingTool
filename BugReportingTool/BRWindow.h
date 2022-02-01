@@ -32,9 +32,14 @@ private slots:
 	void closeEvent(QCloseEvent*);
 	void dialogIsFinished(int);
 	void onTableClicked(const QModelIndex&);
+	void editItem(const QModelIndex&);
+	void editItem();
+	void customMenuRequested(const QPoint&);
 
 signals:
 	void getDetailedView(int);
+	void generateReport(BRData);
+	void editReport();
 
 private:
 	void init();
@@ -46,14 +51,9 @@ private:
 	void createStatusBar();
 	void createLayout();
 
-	void createIssue();
-
-	void drawRedBorder(int xPos, int yPos, int width, int height);
-
 	//TODO implement in Phase 2
 	//void deleteIssue();
 	//void editIssue();
-
 
 	BRCreateDialog* _createIssueDialog;
 	

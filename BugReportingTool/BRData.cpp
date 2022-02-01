@@ -51,6 +51,23 @@ QString BRData::getCategoryStr()
 		return "Crash";
 }
 
+void BRData::setCategoryFromStr(QString category)
+{
+	_category = categoryFromString(category);
+}
+
+BRData::CATEGORY BRData::categoryFromString(QString category)
+{
+	if (category == "Bug")
+		return BRData::CATEGORY::BUG;
+	else if (category == "Feature Request")
+		return BRData::CATEGORY::FEATURE_REQUEST;
+	else if (category == "Usability Request")
+		return BRData::CATEGORY::USABILITY_ISSUE;
+	else
+		return BRData::CATEGORY::CRASH;
+}
+
 QString BRData::getPriorityStr()
 {
 	if (_priority == MINOR)
@@ -61,4 +78,21 @@ QString BRData::getPriorityStr()
 		return "Critical";
 	else
 		return "Blocker";
+}
+
+void BRData::setPriorityFromStr(QString priority)
+{
+	_priority = priorityFromString(priority);
+}
+
+BRData::PRIORITY BRData::priorityFromString(QString priority)
+{
+	if (priority == "Minor")
+		return BRData::PRIORITY::MINOR;
+	else if(priority == "Major")
+		return BRData::PRIORITY::MAJOR;
+	else if (priority == "Critical")
+		return BRData::PRIORITY::CRITICAL;
+	else
+		return BRData::PRIORITY::BLOCKER;
 }

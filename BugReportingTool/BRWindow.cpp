@@ -23,7 +23,6 @@
 BRWindow::BRWindow()
 {
 	init();
-
 }
 
 BRWindow::BRWindow(std::shared_ptr<BRModel> model)
@@ -48,9 +47,6 @@ void BRWindow::init()
 	createMenuBar();
 	createStatusBar();
 	createLayout();
-
-	//Remove later
-	//drawRedBorder(1000, 500, 600, 300);
 }
 
 void BRWindow::closeEvent(QCloseEvent* event)
@@ -139,13 +135,18 @@ void BRWindow::createLayout()
 	vlayout->addWidget(_searchBar);
 
 	_issueTable = new QTableView(this);
+	_issueTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	_issueTable->horizontalHeader()->setStretchLastSection(true);
 	_issueTable->verticalHeader()->hide();
+	_issueTable->setContextMenuPolicy(Qt::CustomContextMenu);
 	_issueTable->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 	_issueTable->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 	_issueTable->setAlternatingRowColors(true);
 
 	connect(_issueTable, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
+	connect(_issueTable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(editItem(const QModelIndex&)));
+
+	connect(_issueTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
 
 	vlayout->addWidget(_issueTable);
 
@@ -169,6 +170,36 @@ void BRWindow::onTableClicked(const QModelIndex& index)
 	}
 }
 
+void BRWindow::editItem()
+{
+	//not sure if i want to do it this way, need to look into getting the row info
+	emit editReport();
+}
+
+void BRWindow::editItem(const QModelIndex& index)
+{
+	//open dialog, but load all older data from that row
+}
+
+void BRWindow::customMenuRequested(const QPoint& pos)
+{
+	// Handle global position
+	QPoint globalPos = _issueTable->mapToGlobal(pos);
+	
+	//No idea why this works this way, using pos of the click to get index of table...
+	//but if you look at where we draw the menu, it uses globalpos... weird...
+	onTableClicked(_issueTable->indexAt(pos));
+
+	// Create menu and insert some actions
+	QMenu myMenu;
+	myMenu.addAction("Edit", this, SLOT(editItem()));
+	//myMenu.addAction("Delete", this, SLOT(eraseItem()));
+
+	// Show context menu at handling position
+	myMenu.exec(globalPos);
+}
+
+
 void BRWindow::setDetailView(QString details)
 {
 	_detailView->setHtml(details);
@@ -184,40 +215,12 @@ void BRWindow::createIssueButtonPressed()
 
 void BRWindow::dialogIsFinished(int result)
 {
-	//Still needs id info
 	BRData pendingIssue = _createIssueDialog->getPendingIssue();
-}
 
-void BRWindow::createIssue()
-{
-
+	emit generateReport(pendingIssue);
 }
 
 void BRWindow::exportIssuesButtonPressed()
 {
 	//Gather all data items and create the csv files for export
-}
-
-void BRWindow::drawRedBorder(int xPos, int yPos, int width, int height)
-{
-	QFrame* frame = new QFrame();
-	frame->setFrameStyle(QFrame::Box | QFrame::Plain);
-	frame->setWindowFlags(	Qt::FramelessWindowHint 
-							| Qt::Tool 
-							| Qt::WindowTransparentForInput 
-							| Qt::WindowDoesNotAcceptFocus 
-							| Qt::WindowStaysOnTopHint);
-
-	frame->setGeometry(xPos, yPos, width, height);
-	
-	// Set a solid green thick border.
-	frame->setObjectName("testframe");
-	frame->setStyleSheet("#testframe {border: 5px solid red;}");
-
-	// IMPORTANT: A QRegion's coordinates are relative to the widget it's used in. This is not documented.
-	QRegion wholeFrameRegion(0, 0, width, height);
-	QRegion innerFrameRegion = wholeFrameRegion.subtracted(QRegion(5, 5, width - 10, height - 10));
-	frame->setMask(innerFrameRegion);
-	frame->setWindowOpacity(0.5);
-	frame->show();
 }

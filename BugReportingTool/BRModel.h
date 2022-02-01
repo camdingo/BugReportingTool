@@ -14,8 +14,6 @@ public:
 
 	BRModel();
 
-	BRModel(int rowCount, int colCount);
-
 	//Pure Virtual Functions
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
@@ -24,8 +22,8 @@ public:
 	// Override Virtual Functions
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
-	bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
-	bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
+	//bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
+	//bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
 
 	//setters
 	void addIssue(BRData issue);
@@ -37,9 +35,7 @@ public:
 
 private:
 	std::vector<BRData> _data;
-	int _rowCount;
-	int _colCount;
-	int _lastIssueNumber;
+	int _lastIssueNumber; //change this to always pull the real last num from file
 };
 
 #endif // _BRMODEL_

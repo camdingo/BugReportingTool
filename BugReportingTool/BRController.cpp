@@ -1,5 +1,7 @@
 #include "BRController.h"
 
+#include <QDebug>
+
 BRController::BRController(std::shared_ptr<BRModel> model, std::shared_ptr<BRWindow> view)
 {
 	_model = model;
@@ -20,6 +22,8 @@ BRController::~BRController()
 void BRController::createConnections()
 {
 	connect(_view.get(), SIGNAL(getDetailedView(int)), this, SLOT(getDetails(int)));
+
+	connect(_view.get(), SIGNAL(generateReport(BRData)), this, SLOT(saveReport(BRData)));
 }
 
 void BRController::getDetails(int row)
@@ -29,6 +33,24 @@ void BRController::getDetails(int row)
 	_view->setDetailView(details);
 }
 
+void BRController::saveReport(BRData report)
+{
+	qDebug() << "Saving Report";
+
+	//create lock file
+
+	//get next id
+
+	//add id to BRData
+
+	//increment id
+
+	//save new id to file
+	_model->addIssue(report);
+
+	//delete lock file
+}
+
 void BRController::loadIssues()
 {
 	//use boost fs to iterate folders
@@ -36,9 +58,8 @@ void BRController::loadIssues()
 	//push data into model
 
 
-	//TESTING
-
-	for (quint32 i = 0; i < 20; ++i)
+	//CTR testing, remove later
+	for (quint32 i = 0; i < 5; ++i)
 	{
 		BRData test(i, "SAGE", "Component crashed", "cameron", "rob", "21.1", "engineering","domes", 
 			BRData::ISSUE_TYPE::DR, "backend", "exe crashed", BRData::PRIORITY::BLOCKER, BRData::CATEGORY::CRASH);
@@ -48,7 +69,7 @@ void BRController::loadIssues()
 		
 	}
 
-	_model->setLastIssueNumber(19);
+	_model->setLastIssueNumber(5);
 
 	//need to set highest issue number when loading
 
@@ -57,20 +78,5 @@ void BRController::loadIssues()
 
 void BRController::saveIssue()
 {
-
+	
 }
-
-//Use this to capture output from calling xwininfo
-//std::string exec(const char* cmd) 
-//{
-//    std::array<char, 128> buffer;
-//    std::string result;
-//    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-//    if (!pipe) {
-//        throw std::runtime_error("popen() failed!");
-//    }
-//    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-//        result += buffer.data();
-//    }
-//    return result;
-//}

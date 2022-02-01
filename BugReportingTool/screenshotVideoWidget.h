@@ -13,16 +13,21 @@ public:
 	ScreenShotVideoWidget(QWidget* parent);
 	~ScreenShotVideoWidget();
 
+	void drawRedBorder(int xPos, int yPos, int width, int height);
 
 signals:
 	
 public slots:
 	void customMenuRequested(const QPoint& pos);
 	void eraseItems();
+	void openItems();
+
+	void createScreenShot();
+	void createVideo();
 
 private:
 
 
 };
 
-#endif
+#endif // _SCREENSHOTVIDEOWIDGET_

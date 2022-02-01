@@ -30,13 +30,9 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	mainLayout->addWidget(summaryLabel, 0, 0);
 	mainLayout->addWidget(_summary, 0, 1);
 
-
-	//Description
-	QLabel* desLabel = new QLabel("Description");
-	_description = new QTextEdit(this);
-
-	mainLayout->addWidget(desLabel, 1, 0);
-	mainLayout->addWidget(_description, 1, 1);
+	//Space Between Screencap/Video Buttons and Create Button
+	QSpacerItem* summarySpacer = new QSpacerItem(50, 50, QSizePolicy::Fixed, QSizePolicy::Fixed);
+	mainLayout->addItem(summarySpacer, 1, 0, 2, 2);
 
 	//String
 	QLabel* stringLabel = new QLabel("String");
@@ -47,26 +43,59 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	mainLayout->addWidget(_string, 2, 1);
 
 
+	//Affected Version
+	QLabel* versionLabel = new QLabel("Affected Version");
+	_affectedVersion = new QLineEdit(this);
+
+	mainLayout->addWidget(versionLabel, 3, 0);
+	mainLayout->addWidget(_affectedVersion, 3, 1);
+
+
+	//Category
+	QLabel* categoryLabel = new QLabel("Category");
+	_category = new QComboBox(this);
+	_category->addItems({ "Bug", "Feature Request", "Usability Issue", "Crash", "Other" });
+
+	mainLayout->addWidget(categoryLabel, 4, 0);
+	mainLayout->addWidget(_category, 4, 1);
+
+	//Component
+	QLabel* componentLabel = new QLabel("Component");
+	_component = new QComboBox(this);
+	_component->addItems({ "Unknown" }); //Dynamically add this later
+
+	mainLayout->addWidget(componentLabel, 5, 0);
+	mainLayout->addWidget(_component, 5, 1);
+
+
 	//Priority 
 	QLabel* prioLabel = new QLabel("Priority");
 	_priority = new QComboBox(this);
 	_priority->addItems({ "Minor", "Major", "Critical", "Blocker" });
 
-	mainLayout->addWidget(prioLabel, 3, 0);
-	mainLayout->addWidget(_priority, 3, 1);
+	mainLayout->addWidget(prioLabel, 6, 0);
+	mainLayout->addWidget(_priority, 6, 1);
+
+	
+	//Description
+	QLabel* desLabel = new QLabel("Description");
+	_description = new QTextEdit(this);
+
+	mainLayout->addWidget(desLabel, 7, 0);
+	mainLayout->addWidget(_description, 7, 1);
 
 
 	//Space Between Priority and Attachments
 	QSpacerItem* attachspacer = new QSpacerItem(33, 33, QSizePolicy::Fixed, QSizePolicy::Fixed);
-	mainLayout->addItem(attachspacer, 4, 0, 1, 1);
+	mainLayout->addItem(attachspacer, 8, 0, 1, 1);
 
 
 	//Attachments area
 	QLabel* attachmentsLabel = new QLabel("Attachments");
-	mainLayout->addWidget(attachmentsLabel, 5, 0);
-
 	_ssvWidget = new ScreenShotVideoWidget(this);
-	mainLayout->addWidget(_ssvWidget, 5, 1);
+
+	mainLayout->addWidget(attachmentsLabel, 9, 0);
+	mainLayout->addWidget(_ssvWidget, 9, 1);
 
 
 	//Screencap/Video Buttons
@@ -76,17 +105,17 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 
 	ssvButtonLayout->addWidget(_addScreenshotButton);
 	ssvButtonLayout->addWidget(_addVideoButton);
-	mainLayout->addLayout(ssvButtonLayout, 6, 1);
+	mainLayout->addLayout(ssvButtonLayout, 10, 1);
 
 
 	//Space Between Screencap/Video Buttons and Create Button
-	QSpacerItem* spacer = new QSpacerItem(150, 150, QSizePolicy::Fixed, QSizePolicy::Fixed);
-	mainLayout->addItem(spacer,7,0,2,2);
+	QSpacerItem* bottomSpacer = new QSpacerItem(100, 100, QSizePolicy::Fixed, QSizePolicy::Fixed);
+	mainLayout->addItem(bottomSpacer,11,0,2,2);
 
 
 	//Create
 	_createIssueButton = new QPushButton("Create Report");
-	mainLayout->addWidget(_createIssueButton, 8, 0, 1, 2);
+	mainLayout->addWidget(_createIssueButton, 12, 0, 1, 2);
 
 	setLayout(mainLayout);
 
@@ -101,6 +130,10 @@ BRCreateDialog::~BRCreateDialog()
 void BRCreateDialog::createConnections()
 {
 	connect(_summary, SIGNAL(textChanged(const QString&)), this, SLOT(formModifiedHandler()));
+	
+
+	connect(_addScreenshotButton, SIGNAL(clicked()), _ssvWidget, SLOT(createScreenShot()));
+	connect(_addVideoButton, SIGNAL(clicked()), _ssvWidget, SLOT(createVideo()));
 
 	connect(_createIssueButton, SIGNAL(clicked()), this, SLOT(createIssueClicked()));
 }
@@ -108,10 +141,11 @@ void BRCreateDialog::createConnections()
 void BRCreateDialog::generatePendingIssue()
 {
 	QString originator; //get from access control
-	QString affectedVersion;
-	QString component;
-	//_pendingIssue = BRData(0, QString("SAGE"), _summary->text(), QString(""), originator, affectedVersion, _string->currentText(), QString("DOMES"),
-	//	BRData::ISSUE_TYPE::DR, component, _description->toPlainText(), _priority->currentText(), BRData::CATEGORY::BUG);
+	_pendingIssue = BRData(0, QString("SAGE"), _summary->text(), QString(""), originator, _affectedVersion->text(), _string->currentText(), QString("DOMES"),
+		BRData::ISSUE_TYPE::DR, _component->currentText(), _description->toPlainText(), BRData::PRIORITY::MINOR , BRData::CATEGORY::BUG);
+
+	_pendingIssue.setPriorityFromStr(_priority->currentText());
+	_pendingIssue.setCategoryFromStr(_category->currentText());
 }
 
 void BRCreateDialog::createIssueClicked()

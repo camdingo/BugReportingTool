@@ -27,6 +27,7 @@ public:
 		FEATURE_REQUEST,
 		USABILITY_ISSUE,
 		CRASH,
+		OTHER
 	};
 
 	BRData();
@@ -44,10 +45,12 @@ public:
 	void setIssueType(ISSUE_TYPE issueType) { _issueType = issueType; }
 	void setDescription(QString description) { _description = description; }
 	void setPriority(PRIORITY priority) { _priority = priority; }
+	void setPriorityFromStr(QString priority);
 	void setAffectedVersion(QString affectedVersion) { _affectedVersion = affectedVersion; }
 	void setFundingSource(QString fundingSource) { _fundingSource = fundingSource; }
 	void setComponent(QString component) { _component = component; }
 	void setCategory(CATEGORY category) { _category = category; }
+	void setCategoryFromStr(QString category);
 	void setStringName(QString stringName) { _stringName = stringName; }
 
 	//Getters
@@ -68,6 +71,9 @@ public:
 
 	QString getCategoryStr();
 	QString getPriorityStr();
+
+	CATEGORY categoryFromString(QString);
+	PRIORITY priorityFromString(QString);
 
 private:
 	quint32 _issueNumber;

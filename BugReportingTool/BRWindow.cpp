@@ -144,7 +144,7 @@ void BRWindow::createLayout()
 	_issueTable->setAlternatingRowColors(true);
 
 	connect(_issueTable, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
-	connect(_issueTable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(editItem(const QModelIndex&)));
+	connect(_issueTable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(editReport(const QModelIndex&)));
 
 	connect(_issueTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
 
@@ -170,15 +170,18 @@ void BRWindow::onTableClicked(const QModelIndex& index)
 	}
 }
 
-void BRWindow::editItem()
+void BRWindow::editReport(const QModelIndex& index)
 {
-	//not sure if i want to do it this way, need to look into getting the row info
-	emit editReport();
-}
-
-void BRWindow::editItem(const QModelIndex& index)
-{
+	//refactort later...dupe code
 	//open dialog, but load all older data from that row
+
+
+
+	//_createIssueDialog = new BRCreateDialog(this, report);
+	//connect(_createIssueDialog, SIGNAL(finished(int)), this, SLOT(dialogIsFinished(int)));
+
+	//_createIssueDialog->exec();
+
 }
 
 void BRWindow::customMenuRequested(const QPoint& pos)
@@ -192,8 +195,7 @@ void BRWindow::customMenuRequested(const QPoint& pos)
 
 	// Create menu and insert some actions
 	QMenu myMenu;
-	myMenu.addAction("Edit", this, SLOT(editItem()));
-	//myMenu.addAction("Delete", this, SLOT(eraseItem()));
+	myMenu.addAction("Delete", this, SLOT(eraseItem()));
 
 	// Show context menu at handling position
 	myMenu.exec(globalPos);
@@ -210,6 +212,7 @@ void BRWindow::createIssueButtonPressed()
 	_createIssueDialog = new BRCreateDialog(this);
 	connect(_createIssueDialog, SIGNAL(finished(int)), this, SLOT(dialogIsFinished(int)));
 
+	//wait here until dialog is closed either via accept or finished
 	_createIssueDialog->exec();
 }
 

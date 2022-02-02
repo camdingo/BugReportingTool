@@ -6,6 +6,8 @@
 #include <QVector>
 #include <QAbstractTableModel>
 
+#include <deque>
+
 #include "BRData.h"
 
 class BRModel: public QAbstractTableModel
@@ -31,10 +33,11 @@ public:
 
 	//getters
 	QString getDetails(int row);
+	BRData getReport(int row);
 	int getLastIssueNumber() { return _lastIssueNumber; }
 
 private:
-	std::vector<BRData> _data;
+	std::deque<BRData> _data;
 	int _lastIssueNumber; //change this to always pull the real last num from file
 };
 

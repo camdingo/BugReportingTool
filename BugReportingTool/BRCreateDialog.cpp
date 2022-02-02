@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QSpacerItem>
+#include <QDebug>
 
 #include "BRData.h"
 
@@ -153,7 +154,7 @@ void BRCreateDialog::createIssueClicked()
 	//create br data
 	generatePendingIssue();
 
-	//close dialog?
+	//Hides the modal dialog and sets the result code to Accepted
 	accept();
 }
 
@@ -184,7 +185,6 @@ void BRCreateDialog::closeEvent(QCloseEvent* event)
 	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Yes);
 	
-
 	int ret = msgBox.exec();
 
 	if (ret == QMessageBox::Cancel)
@@ -197,8 +197,7 @@ void BRCreateDialog::closeEvent(QCloseEvent* event)
 	}
 	else if (ret == QMessageBox::Yes)
 	{
-		event->accept();
-
+		generatePendingIssue();
 	}
 
 	emit finished(1);

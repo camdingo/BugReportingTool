@@ -32,14 +32,12 @@ private slots:
 	void closeEvent(QCloseEvent*);
 	void dialogIsFinished(int);
 	void onTableClicked(const QModelIndex&);
-	void editItem(const QModelIndex&);
-	void editItem();
+	void editReport(const QModelIndex&);
 	void customMenuRequested(const QPoint&);
 
 signals:
 	void getDetailedView(int);
 	void generateReport(BRData);
-	void editReport();
 
 private:
 	void init();

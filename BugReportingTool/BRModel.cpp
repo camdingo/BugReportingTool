@@ -1,9 +1,9 @@
 #include "BRModel.h"
 
 #include <QDebug>
+
 BRModel::BRModel()
 {
-
 }
 
 int BRModel::rowCount(const QModelIndex& parent) const 
@@ -96,9 +96,14 @@ QVariant BRModel::headerData(int section, Qt::Orientation orientation, int role)
 
 void BRModel::addIssue(BRData issue)
 {
-	beginInsertRows(QModelIndex(), 0, _data.size());
-	_data.push_back(issue);
+	beginInsertRows(QModelIndex(), 0, 0);
+	_data.push_front(issue);
 	endInsertRows();
+}
+
+BRData BRModel::getReport(int row)
+{
+	return _data[row];
 }
 
 QString BRModel::getDetails(int row)

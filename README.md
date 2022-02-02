@@ -9,3 +9,9 @@ Selecting an issue will display more content about it to the right
 Exporting issues in csv format for import into jira at a later date.
 
 Allows for Screenshot or video attachments
+
+
+
+![alt text](https://github.com/camdingo/BugReportingTool/blob/master/mainWindow.PNG)
+
+![alt text](https://github.com/camdingo/BugReportingTool/blob/master/createWindow.PNG)

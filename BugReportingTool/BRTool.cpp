@@ -46,6 +46,25 @@ void setStyle(QApplication* application)
 
 }
 
+/*
+* TODO
+* search bar
+* export issues ... ie tar all new issue folders since last export for SRE transfer
+* add modelName to creation dialog
+* pull components from model for creation dialog
+* add ffmpeg calls to screen shot and video cap
+* attachment opening/playing
+* creation of issues/attachments to disk... ie /...../<issueNumber>/*csv , *jpg , *mp4
+* load issues/ attachments from disk
+* write last issue number to persistence file
+* lock file for sync purpose when getting next issue number
+* populate originator with access control info
+* access control export and delete actions (Base only?)
+* more logging???
+* auto populate affected version when user enters which string
+* edit previous reports
+*/
+
 int main(int argc, char** argv)
 {
 	qDebug() << "Bug Reporting Tool Starting.";

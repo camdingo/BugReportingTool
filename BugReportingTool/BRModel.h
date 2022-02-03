@@ -27,6 +27,9 @@ public:
 	//bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
 	//bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
 
+	void removeSelectedIssue(int);
+	
+
 	//setters
 	void addIssue(BRData issue);
 	void setLastIssueNumber(int lastIssueNumber) { _lastIssueNumber = lastIssueNumber; }

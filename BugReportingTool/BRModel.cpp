@@ -67,31 +67,12 @@ QVariant BRModel::headerData(int section, Qt::Orientation orientation, int role)
 
 }
 
-//bool BRModel::insertRows(int position, int rows, const QModelIndex& index)
-//{
-//	Q_UNUSED(index);
-//	beginInsertRows(QModelIndex(), position, position + rows - 1);
-//
-//	for (int row = 0; row < rows; row++) {
-//		
-//	}
-//
-//	endInsertRows();
-//	return true;
-//}
-//
-//bool BRModel::removeRows(int position, int rows, const QModelIndex& index)
-//{
-//	Q_UNUSED(index);
-//	beginRemoveRows(QModelIndex(), position, position + rows - 1);
-//
-//	for (int row = 0; row < rows; ++row) {
-//		
-//	}
-//
-//	endRemoveRows();
-//	return true;
-//}
+void BRModel::removeSelectedIssue(int row)
+{
+	beginRemoveRows(QModelIndex(), row, row);
+	_data.erase(_data.begin() + row );
+	endRemoveRows();
+}
 
 
 void BRModel::addIssue(BRData issue)
@@ -129,3 +110,30 @@ QString BRModel::getDetails(int row)
 
 	return QString("<html> <body style='color:white'>") + details + QString("< / body> < / html>");
 }
+
+//CTR probably not needed
+//bool BRModel::insertRows(int position, int rows, const QModelIndex& index)
+//{
+//	Q_UNUSED(index);
+//	beginInsertRows(QModelIndex(), position, position + rows - 1);
+//
+//	for (int row = 0; row < rows; row++) {
+//		
+//	}
+//
+//	endInsertRows();
+//	return true;
+//}
+//
+//bool BRModel::removeRows(int position, int rows, const QModelIndex& index)
+//{
+//	Q_UNUSED(index);
+//	beginRemoveRows(QModelIndex(), position, position + rows - 1);
+//
+//	for (int row = 0; row < rows; ++row) {
+//		
+//	}
+//
+//	endRemoveRows();
+//	return true;
+//}

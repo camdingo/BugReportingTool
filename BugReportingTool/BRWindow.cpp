@@ -14,11 +14,23 @@
 #include <QCloseEvent>
 #include <QLineEdit>
 #include <QCompleter>
-#include <QTableView>
 #include <QTextBrowser>
 #include <QHeaderView>
 
 #include "BRCreateDialog.h"
+
+
+//This is silly, but i wanted to be able to scroll with my up and down arrows
+void IssueTable::keyPressEvent(QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Up
+		|| event->key() == Qt::Key_Down)
+	{
+		QTableView::keyPressEvent(event);
+	
+		emit clicked(selectedIndexes().front());
+	}
+}
 
 BRWindow::BRWindow()
 {
@@ -29,7 +41,6 @@ BRWindow::BRWindow(std::shared_ptr<BRModel> model)
 {
 	init();
 
-	_completer->setModel(model.get());
 	_issueTable->setModel(model.get());
 
 	resize(1280, 720);
@@ -128,13 +139,10 @@ void BRWindow::createLayout()
 	QWidget* mainWidget = new QWidget(this);
 	QVBoxLayout* vlayout = new QVBoxLayout();
 
-	_completer = new QCompleter(this);
-
 	_searchBar = new QLineEdit(this);
-	_searchBar->setCompleter(_completer);
 	vlayout->addWidget(_searchBar);
 
-	_issueTable = new QTableView(this);
+	_issueTable = new IssueTable(this);
 	_issueTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	_issueTable->horizontalHeader()->setStretchLastSection(true);
 	_issueTable->verticalHeader()->hide();
@@ -144,8 +152,8 @@ void BRWindow::createLayout()
 	_issueTable->setAlternatingRowColors(true);
 
 	connect(_issueTable, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
+	connect(_issueTable, SIGNAL(entered(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
 	connect(_issueTable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(editReport(const QModelIndex&)));
-
 	connect(_issueTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
 
 	vlayout->addWidget(_issueTable);
@@ -201,6 +209,26 @@ void BRWindow::customMenuRequested(const QPoint& pos)
 	myMenu.exec(globalPos);
 }
 
+void BRWindow::eraseItem()
+{
+	QMessageBox msgBox(this);
+
+	msgBox.setText("Are you sure you want to erase this report?");
+	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	msgBox.setDefaultButton(QMessageBox::Yes);
+
+	int ret = msgBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		QModelIndexList selection = _issueTable->selectionModel()->selectedRows();
+		if (selection.count() == 1)
+		{
+			QModelIndex index = selection.at(0);
+			emit deleteSelectedReport(index.row());
+		}
+	}
+}
 
 void BRWindow::setDetailView(QString details)
 {

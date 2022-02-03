@@ -24,6 +24,8 @@ void BRController::createConnections()
 	connect(_view.get(), SIGNAL(getDetailedView(int)), this, SLOT(getDetails(int)));
 
 	connect(_view.get(), SIGNAL(generateReport(BRData)), this, SLOT(saveReport(BRData)));
+
+	connect(_view.get(), SIGNAL(deleteSelectedReport(int)), this, SLOT(deleteSelected(int)));
 }
 
 void BRController::getDetails(int row)
@@ -31,6 +33,12 @@ void BRController::getDetails(int row)
 	QString details = _model->getDetails(row);
 
 	_view->setDetailView(details);
+}
+
+void BRController::deleteSelected(int row)
+{
+	qDebug() << "Erasing Report";
+	_model->removeSelectedIssue(row);
 }
 
 void BRController::saveReport(BRData report)

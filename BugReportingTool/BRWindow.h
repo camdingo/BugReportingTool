@@ -2,6 +2,7 @@
 #define _BRWINDOW_
 
 #include <QMainWindow>
+#include <QTableView>
 
 #include "BRModel.h"
 #include "BRData.h"
@@ -11,9 +12,17 @@ class QPushButton;
 class QMenu;
 class QLineEdit;
 class QCompleter;
-class QTableView;
 class QTextBrowser;
 
+
+//This whole subclass was created to allow for arrow key scrolling... yea yea, i wanted this feature!
+class IssueTable : public QTableView
+{
+public:
+	IssueTable(QWidget* parent) : QTableView(parent) {}
+
+	void keyPressEvent(QKeyEvent* event);
+};
 
 class BRWindow : public QMainWindow
 {
@@ -27,17 +36,21 @@ public:
 	void setDetailView(QString);
 
 private slots:
+	//override
+	void customMenuRequested(const QPoint&);
+
 	void createIssueButtonPressed();
 	void exportIssuesButtonPressed();
 	void closeEvent(QCloseEvent*);
 	void dialogIsFinished(int);
 	void onTableClicked(const QModelIndex&);
 	void editReport(const QModelIndex&);
-	void customMenuRequested(const QPoint&);
+	void eraseItem();
 
 signals:
 	void getDetailedView(int);
 	void generateReport(BRData);
+	void deleteSelectedReport(int);
 
 private:
 	void init();
@@ -63,7 +76,6 @@ private:
 
 	//Search box
 	QLineEdit* _searchBar;
-	QCompleter* _completer;
 	
 	//Buttons
 	QPushButton *_createIssueButton;
@@ -71,7 +83,7 @@ private:
 	QPushButton *_editIssueButton;
 
 	//Table
-	QTableView *_issueTable;
+	IssueTable *_issueTable;
 
 	//Detail View
 	QTextBrowser *_detailView;

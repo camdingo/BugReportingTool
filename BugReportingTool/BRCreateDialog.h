@@ -22,6 +22,7 @@ public:
 	void createConnections();
 	BRData getPendingIssue() { return _pendingIssue; }
 
+	void loadComponents();
 	void generatePendingIssue();
 
 signals:
@@ -34,6 +35,9 @@ private:
 	virtual void closeEvent(QCloseEvent* event);
 
 	bool _formModified;
+
+	std::map < std::string, std::list<std::string> > _modelComponents; // ie egplite1: streamer1 streamer2
+																	   //    egplite2: streamer1 streamer2
 
 	//Entry fields
 	QLineEdit* _summary;

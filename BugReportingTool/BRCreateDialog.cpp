@@ -202,3 +202,12 @@ void BRCreateDialog::closeEvent(QCloseEvent* event)
 
 	emit finished(1);
 }
+
+
+void BRCreateDialog::loadComponents()
+{
+	//open model files from all 
+	//std::string modelName = "TBD";
+	//std::list<std::string> components({ "test1", "test2"});
+	//_modelComponents[modelName] = components;
+}

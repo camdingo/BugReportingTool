@@ -19,6 +19,7 @@ public:
 public slots:
 	void getDetails(int);
 	void saveReport(BRData);
+	void deleteSelected(int);
 
 private:
 	void createConnections();

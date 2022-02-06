@@ -13,10 +13,15 @@
 
 #include "BRData.h"
 
+QStringList STRING_NAMES = { "String 1", "String 2", "String 3", "String 4", "Engineering 1", "Engineering 2" };
+QStringList CATEGORIES = { "Bug", "Feature Request", "Usability Issue", "Crash", "Other" };
+QStringList PRIORITY = { "Minor", "Major", "Critical", "Blocker" };
+QStringList COMPONENTS = { "Unknown" }; // TODO fill this in differently will real items
 
 BRCreateDialog::BRCreateDialog(QWidget* parent)
 	:	QDialog(parent)
 	,	_formModified(false)
+	,	_update(false)
 {
 	qRegisterMetaType<BRData>("BRData");
 
@@ -38,7 +43,7 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	//String
 	QLabel* stringLabel = new QLabel("String");
 	_string = new QComboBox(this);
-	_string->addItems({"String 1", "String 2", "String 3", "String 4", "Engineering 1", "Engineering 2"});
+	_string->addItems(STRING_NAMES);
 
 	mainLayout->addWidget(stringLabel, 2, 0);
 	mainLayout->addWidget(_string, 2, 1);
@@ -55,7 +60,7 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	//Category
 	QLabel* categoryLabel = new QLabel("Category");
 	_category = new QComboBox(this);
-	_category->addItems({ "Bug", "Feature Request", "Usability Issue", "Crash", "Other" });
+	_category->addItems(CATEGORIES);
 
 	mainLayout->addWidget(categoryLabel, 4, 0);
 	mainLayout->addWidget(_category, 4, 1);
@@ -63,7 +68,7 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	//Component
 	QLabel* componentLabel = new QLabel("Component");
 	_component = new QComboBox(this);
-	_component->addItems({ "Unknown" }); //Dynamically add this later
+	_component->addItems(COMPONENTS); //Dynamically add this later
 
 	mainLayout->addWidget(componentLabel, 5, 0);
 	mainLayout->addWidget(_component, 5, 1);
@@ -72,7 +77,7 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	//Priority 
 	QLabel* prioLabel = new QLabel("Priority");
 	_priority = new QComboBox(this);
-	_priority->addItems({ "Minor", "Major", "Critical", "Blocker" });
+	_priority->addItems(PRIORITY);
 
 	mainLayout->addWidget(prioLabel, 6, 0);
 	mainLayout->addWidget(_priority, 6, 1);
@@ -121,6 +126,10 @@ BRCreateDialog::BRCreateDialog(QWidget* parent)
 	setLayout(mainLayout);
 
 	createConnections();
+
+
+	//Load user info from access control
+	//_originator = "";
 }
 
 BRCreateDialog::~BRCreateDialog()
@@ -132,26 +141,68 @@ void BRCreateDialog::createConnections()
 {
 	connect(_summary, SIGNAL(textChanged(const QString&)), this, SLOT(formModifiedHandler()));
 	
-
 	connect(_addScreenshotButton, SIGNAL(clicked()), _ssvWidget, SLOT(createScreenShot()));
 	connect(_addVideoButton, SIGNAL(clicked()), _ssvWidget, SLOT(createVideo()));
 
 	connect(_createIssueButton, SIGNAL(clicked()), this, SLOT(createIssueClicked()));
 }
 
+void BRCreateDialog::loadReport(BRData report)
+{
+	_update = true;
+	_updateIssueId = report.getIssueNumber();
+	//set all fields from report
+	_createIssueButton->setText("Update Report");
+
+	//Hidden items
+	_originator = report.getOriginator();
+
+	//Visible items
+	_summary->setText(report.getSummary());
+	_string->setCurrentIndex(STRING_NAMES.indexOf(report.getStringName()));
+	_affectedVersion->setText(report.getAffectedVersion());
+	_category->setCurrentIndex(CATEGORIES.indexOf(report.getCategoryStr()));
+	_component->setCurrentIndex(COMPONENTS.indexOf(report.getComponent()));
+	_priority->setCurrentIndex(PRIORITY.indexOf(report.getPriorityStr()));
+	_description->setText(report.getDescription());
+
+	int numAttach = report.getAttachments().size();
+
+	for (int i = 0; i < numAttach; ++i)
+	{
+		QListWidgetItem* item = new QListWidgetItem(report.getAttachments()[i].first);
+		QString fileLocation(report.getAttachments()[i].second);
+		item->setData(Qt::UserRole, fileLocation);
+		_ssvWidget->addItem(item);
+	}
+}
+
 void BRCreateDialog::generatePendingIssue()
 {
-	QString originator; //get from access control
-	_pendingIssue = BRData(0, QString("SAGE"), _summary->text(), QString(""), originator, _affectedVersion->text(), _string->currentText(), QString("DOMES"),
+	_pendingIssue = BRData(0, QString("SAGE"), _summary->text(), QString(""), _originator, _affectedVersion->text(), _string->currentText(), QString("DOMES"),
 		BRData::ISSUE_TYPE::DR, _component->currentText(), _description->toPlainText(), BRData::PRIORITY::MINOR , BRData::CATEGORY::BUG);
 
 	_pendingIssue.setPriorityFromStr(_priority->currentText());
 	_pendingIssue.setCategoryFromStr(_category->currentText());
+
+	//Add attachments?
+	ATTACHMENTS attachemnts;
+	for (int i = 0; i < _ssvWidget->count(); ++i)
+	{
+		QPair<QString, QString> attachment(_ssvWidget->item(i)->text(), _ssvWidget->item(i)->data(Qt::UserRole).toString());
+		attachemnts.push_back(attachment);
+	}
+
+	if (_update)
+	{
+		_pendingIssue.setIssueNumber(_updateIssueId);
+	}
 }
 
 void BRCreateDialog::createIssueClicked()
 {
-	//create br data
+
+	//Generate BRData
 	generatePendingIssue();
 
 	//Hides the modal dialog and sets the result code to Accepted
@@ -160,6 +211,7 @@ void BRCreateDialog::createIssueClicked()
 
 void BRCreateDialog::formModifiedHandler()
 {
+	//TODO add more checks
 	if (	_summary->text() == ""
 		&&	_description->toPlainText() == ""
 		&& _ssvWidget->count() == 0
@@ -180,8 +232,17 @@ void BRCreateDialog::closeEvent(QCloseEvent* event)
 	if (!_formModified)
 		return;
 
-	msgBox.setText("Issue Creation In Progress!");
-	msgBox.setInformativeText("Do you want to Create the report?");
+	if (!_update)
+	{
+		msgBox.setText("Issue Creation In Progress!");
+		msgBox.setInformativeText("Do you want to Create the report?");
+	}
+	else
+	{
+		msgBox.setText("Issue Update In Progress!");
+		msgBox.setInformativeText("Do you want to Update the report?");
+	}
+
 	msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Yes);
 	

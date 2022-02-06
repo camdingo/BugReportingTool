@@ -20,7 +20,6 @@ ScreenShotVideoWidget::ScreenShotVideoWidget(QWidget* parent)
 
 	setAlternatingRowColors(true);
 
-
 	//CTR testing, remove later
 	for (int i = 0; i < 5; ++i)
 	{
@@ -28,7 +27,6 @@ ScreenShotVideoWidget::ScreenShotVideoWidget(QWidget* parent)
 		QString fileLocation("/msic/egfeg/gere");
 		item->setData(Qt::UserRole, fileLocation);
 		addItem(item);
-
 	}
 }
 

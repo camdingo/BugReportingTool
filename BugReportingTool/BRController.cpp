@@ -26,12 +26,16 @@ void BRController::createConnections()
 	connect(_view.get(), SIGNAL(generateReport(BRData)), this, SLOT(saveReport(BRData)));
 
 	connect(_view.get(), SIGNAL(deleteSelectedReport(int)), this, SLOT(deleteSelected(int)));
+
+	connect(_view.get(), SIGNAL(retrieveSelectedReport(int)), this, SLOT(retrieveSelected(int)));
+
+	connect(_view.get(), SIGNAL(sendUpdatedReport(BRData)), this, SLOT(updateReport(BRData)));
 }
 
 void BRController::getDetails(int row)
 {
+	qDebug() << "Getting Details";
 	QString details = _model->getDetails(row);
-
 	_view->setDetailView(details);
 }
 
@@ -39,6 +43,12 @@ void BRController::deleteSelected(int row)
 {
 	qDebug() << "Erasing Report";
 	_model->removeSelectedIssue(row);
+}
+
+void BRController::retrieveSelected(int row)
+{
+	qDebug() << "Retrieving Report";
+	_view->updateReport(_model->getReport(row));
 }
 
 void BRController::saveReport(BRData report)
@@ -59,6 +69,19 @@ void BRController::saveReport(BRData report)
 	//delete lock file
 }
 
+void BRController::updateReport(BRData report)
+{
+	qDebug() << "BRController Updating Report";
+
+	//create lock file
+
+
+	//save new id to file
+	_model->updateIssue(report);
+
+	//delete lock file
+}
+
 void BRController::loadIssues()
 {
 	//use boost fs to iterate folders
@@ -69,7 +92,7 @@ void BRController::loadIssues()
 	//CTR testing, remove later
 	for (quint32 i = 0; i < 5; ++i)
 	{
-		BRData test(i, "SAGE", "Component crashed", "cameron", "rob", "21.1", "engineering","domes", 
+		BRData test(i, "SAGE", "Component crashed", "cameron", "rob", "21.1", "Engineering 1","domes", 
 			BRData::ISSUE_TYPE::DR, "backend", "exe crashed", BRData::PRIORITY::BLOCKER, BRData::CATEGORY::CRASH);
 
 		_model->addIssue(test);

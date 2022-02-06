@@ -82,6 +82,25 @@ void BRModel::addIssue(BRData issue)
 	endInsertRows();
 }
 
+void BRModel::updateIssue(BRData issue)
+{
+	beginResetModel();
+
+	std::deque<BRData>::iterator itr;
+	itr = std::find(_data.begin(), _data.end(), issue);
+	if (itr != _data.end())
+	{
+		qDebug() << "Found";
+		*itr = issue;
+	}
+	else
+	{
+		qDebug() << "Not Found";
+	}
+
+	endResetModel();
+}
+
 BRData BRModel::getReport(int row)
 {
 	return _data[row];

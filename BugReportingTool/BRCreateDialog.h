@@ -22,6 +22,8 @@ public:
 	void createConnections();
 	BRData getPendingIssue() { return _pendingIssue; }
 
+	void loadReport(BRData);
+
 	void loadComponents();
 	void generatePendingIssue();
 
@@ -34,10 +36,15 @@ public slots:
 private:
 	virtual void closeEvent(QCloseEvent* event);
 
+	bool _update;
+	int _updateIssueId;
 	bool _formModified;
 
 	std::map < std::string, std::list<std::string> > _modelComponents; // ie egplite1: streamer1 streamer2
 																	   //    egplite2: streamer1 streamer2
+
+	//Hidden fields
+	QString _originator; //get from access control
 
 	//Entry fields
 	QLineEdit* _summary;

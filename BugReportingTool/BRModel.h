@@ -32,6 +32,7 @@ public:
 
 	//setters
 	void addIssue(BRData issue);
+	void updateIssue(BRData issue);
 	void setLastIssueNumber(int lastIssueNumber) { _lastIssueNumber = lastIssueNumber; }
 
 	//getters

@@ -38,6 +38,7 @@ BRWindow::BRWindow()
 }
 
 BRWindow::BRWindow(std::shared_ptr<BRModel> model)
+	:	_updatingOlder(false)
 {
 	init();
 
@@ -141,6 +142,7 @@ void BRWindow::createLayout()
 
 	_searchBar = new QLineEdit(this);
 	vlayout->addWidget(_searchBar);
+	connect(_searchBar, SIGNAL(textChanged(const QString&)), this, SLOT(filterTable(const QString&)));
 
 	_issueTable = new IssueTable(this);
 	_issueTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -183,12 +185,12 @@ void BRWindow::editReport(const QModelIndex& index)
 	//refactort later...dupe code
 	//open dialog, but load all older data from that row
 
+	emit retrieveSelectedReport(index.row());
 
+}
 
-	//_createIssueDialog = new BRCreateDialog(this, report);
-	//connect(_createIssueDialog, SIGNAL(finished(int)), this, SLOT(dialogIsFinished(int)));
-
-	//_createIssueDialog->exec();
+void BRWindow::filterTable(const QString& searchPhrase)
+{
 
 }
 
@@ -244,11 +246,33 @@ void BRWindow::createIssueButtonPressed()
 	_createIssueDialog->exec();
 }
 
+void BRWindow::updateReport(BRData report)
+{
+	_updatingOlder = true;
+	_createIssueDialog = new BRCreateDialog(this);
+	_createIssueDialog->loadReport(report);
+	connect(_createIssueDialog, SIGNAL(finished(int)), this, SLOT(dialogIsFinished(int)));
+
+	_createIssueDialog->exec();
+}
+
 void BRWindow::dialogIsFinished(int result)
 {
 	BRData pendingIssue = _createIssueDialog->getPendingIssue();
 
-	emit generateReport(pendingIssue);
+	if (!_updatingOlder)
+	{
+		qDebug() << "BRWindow Creating Report";
+		emit generateReport(pendingIssue);
+	}
+	else
+	{
+		qDebug() << "BRWindow Updating Report"; 
+		//TODO
+		// no need to grab new report id
+		emit sendUpdatedReport(pendingIssue);
+		_updatingOlder = false;
+	}
 }
 
 void BRWindow::exportIssuesButtonPressed()

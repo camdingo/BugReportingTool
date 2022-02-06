@@ -34,11 +34,13 @@ public:
 	~BRWindow();
 
 	void setDetailView(QString);
+	void updateReport(BRData);
 
 private slots:
 	//override
 	void customMenuRequested(const QPoint&);
 
+	void filterTable(const QString&);
 	void createIssueButtonPressed();
 	void exportIssuesButtonPressed();
 	void closeEvent(QCloseEvent*);
@@ -51,6 +53,8 @@ signals:
 	void getDetailedView(int);
 	void generateReport(BRData);
 	void deleteSelectedReport(int);
+	void retrieveSelectedReport(int);
+	void sendUpdatedReport(BRData);
 
 private:
 	void init();
@@ -65,6 +69,8 @@ private:
 	//TODO implement in Phase 2
 	//void deleteIssue();
 	//void editIssue();
+
+	bool _updatingOlder;
 
 	BRCreateDialog* _createIssueDialog;
 	

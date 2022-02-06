@@ -6,7 +6,7 @@
 #include <QMetaType>
 #include <QDateTime>
 
-
+typedef QVector<QPair<QString, QString> > ATTACHMENTS;
 class BRData
 {
 public:
@@ -36,6 +36,8 @@ public:
 		QString affectedVersion, QString stringName, QString fundingSource, ISSUE_TYPE issueType, QString component,
 		QString description, PRIORITY priority, CATEGORY category);
 
+	bool operator==(const BRData& rhs) {  return (_issueNumber == rhs.getIssueNumber()); }
+
 	//Setters
 	void setIssueNumber(quint32 issueNumber) {_issueNumber = issueNumber; }
 	void setSummary(QString summary) { _summary = summary; }
@@ -52,22 +54,25 @@ public:
 	void setCategory(CATEGORY category) { _category = category; }
 	void setCategoryFromStr(QString category);
 	void setStringName(QString stringName) { _stringName = stringName; }
+	void setAttachments(ATTACHMENTS attachments) { _attachments = attachments; }
 
 	//Getters
-	quint32 getIssueNumber() { return _issueNumber; }
-	QString getProject() { return _project; }
-	QString getSummary() { return _summary; }
-	QString getAssignee() { return _assignee; }
-	QString getOriginator() { return _originator; }
-	ISSUE_TYPE getIssueType() { return _issueType; }
-	QString getDescription() { return _description; }
-	PRIORITY getPriority() { return _priority; }
-	QString getAffectedVersion() { return _affectedVersion; }
-	QString getFundingSource() { return _fundingSource; }
-	QString getComponent() { return _component; }
-	CATEGORY getCategory() { return _category; }
-	QDateTime getCreationDate() { return _creationDate; }
-	QString getStringName() { return _stringName; }
+	quint32 getIssueNumber() const { return _issueNumber; }
+	QString getProject() const { return _project; }
+	QString getSummary() const { return _summary; }
+	QString getAssignee() const { return _assignee; }
+	QString getOriginator() const { return _originator; }
+	ISSUE_TYPE getIssueType() const { return _issueType; }
+	QString getDescription() const { return _description; }
+	PRIORITY getPriority() const { return _priority; }
+	QString getAffectedVersion() const { return _affectedVersion; }
+	QString getFundingSource() const { return _fundingSource; }
+	QString getComponent() const { return _component; }
+	CATEGORY getCategory() const { return _category; }
+	QDateTime getCreationDate() const { return _creationDate; }
+	QString getStringName() const { return _stringName; }
+	ATTACHMENTS getAttachments() const { return _attachments; }
+
 
 	QString getCategoryStr();
 	QString getPriorityStr();
@@ -92,7 +97,7 @@ private:
 	CATEGORY _category;
 
 	//The attachments can hold locations of logs/videos/screencaps
-	QVector<QString> _attachments;
+	ATTACHMENTS _attachments;
 
 };
 

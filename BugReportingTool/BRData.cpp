@@ -47,8 +47,10 @@ QString BRData::getCategoryStr()
 		return "Feature Request";
 	else if (_category == USABILITY_ISSUE)
 		return "Usability Issue";
-	else
+	else if(_category == CRASH)
 		return "Crash";
+	else
+	return "Other";
 }
 
 void BRData::setCategoryFromStr(QString category)
@@ -64,8 +66,10 @@ BRData::CATEGORY BRData::categoryFromString(QString category)
 		return BRData::CATEGORY::FEATURE_REQUEST;
 	else if (category == "Usability Request")
 		return BRData::CATEGORY::USABILITY_ISSUE;
-	else
+	else if (category == "Crash")
 		return BRData::CATEGORY::CRASH;
+	else
+		return BRData::CATEGORY::OTHER;
 }
 
 QString BRData::getPriorityStr()

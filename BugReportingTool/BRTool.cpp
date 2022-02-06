@@ -6,8 +6,6 @@
 #include "BRWindow.h"
 #include "BRController.h"
 
-using namespace std;
-
 //Dark Theme
 void setStyle(QApplication* application)
 {
@@ -62,7 +60,6 @@ void setStyle(QApplication* application)
 * access control export and delete actions (Base only?)
 * more logging???
 * auto populate affected version when user enters which string
-* edit previous reports
 */
 
 int main(int argc, char** argv)

@@ -16,11 +16,35 @@
 #include <QCompleter>
 #include <QTextBrowser>
 #include <QHeaderView>
+#include <QSortFilterProxyModel>
 
 #include "BRCreateDialog.h"
 
+//-------------------------------------------------------------------------------------------------------
+//Proxy Model Class Functions
+//-------------------------------------------------------------------------------------------------------
+bool ProxyModel::filterAcceptsRow(int row, const QModelIndex& parent) const
+{
+	QModelIndex issueNum = sourceModel()->index(row, 0, parent);
+	QModelIndex summary = sourceModel()->index(row, 1, parent);
+	QModelIndex desc = sourceModel()->index(row, 2, parent);
+	QModelIndex prio = sourceModel()->index(row, 3, parent);
+	QModelIndex version = sourceModel()->index(row, 4, parent);
+	QModelIndex originator = sourceModel()->index(row, 5, parent);
 
+	return (sourceModel()->data(issueNum).toString().contains(filterRegExp())
+		|| sourceModel()->data(summary).toString().contains(filterRegExp())
+		|| sourceModel()->data(desc, Qt::UserRole).toString().contains(filterRegExp())
+		|| sourceModel()->data(prio, Qt::UserRole).toString().contains(filterRegExp())
+		|| sourceModel()->data(version, Qt::UserRole).toString().contains(filterRegExp())
+		|| sourceModel()->data(originator, Qt::UserRole).toString().contains(filterRegExp())
+		);
+}
+
+//-------------------------------------------------------------------------------------------------------
+//Issue Table Class Functions
 //This is silly, but i wanted to be able to scroll with my up and down arrows
+//-------------------------------------------------------------------------------------------------------
 void IssueTable::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == Qt::Key_Up
@@ -32,6 +56,9 @@ void IssueTable::keyPressEvent(QKeyEvent* event)
 	}
 }
 
+//-------------------------------------------------------------------------------------------------------
+//BRWindow Class Functions
+//-------------------------------------------------------------------------------------------------------
 BRWindow::BRWindow()
 {
 	init();
@@ -42,7 +69,15 @@ BRWindow::BRWindow(std::shared_ptr<BRModel> model)
 {
 	init();
 
-	_issueTable->setModel(model.get());
+	_proxyModel = new ProxyModel(this);
+	_proxyModel->setSourceModel(model.get());
+	_issueTable->setModel(_proxyModel);
+
+	//Hide columns that done matter
+	_issueTable->hideColumn(2);
+	_issueTable->hideColumn(3);
+	_issueTable->hideColumn(4);
+	_issueTable->hideColumn(5);
 
 	resize(1280, 720);
 }
@@ -152,6 +187,7 @@ void BRWindow::createLayout()
 	_issueTable->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 	_issueTable->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 	_issueTable->setAlternatingRowColors(true);
+	_issueTable->hideColumn(2);
 
 	connect(_issueTable, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
 	connect(_issueTable, SIGNAL(entered(const QModelIndex&)), this, SLOT(onTableClicked(const QModelIndex&)));
@@ -176,22 +212,21 @@ void BRWindow::onTableClicked(const QModelIndex& index)
 {
 	if (index.isValid()) 
 	{
-		emit getDetailedView(index.row());
+		emit getDetailedView(_proxyModel->mapToSource(index).row());
 	}
 }
 
 void BRWindow::editReport(const QModelIndex& index)
 {
-	//refactort later...dupe code
-	//open dialog, but load all older data from that row
-
-	emit retrieveSelectedReport(index.row());
-
+	if (index.isValid())
+	{
+		emit retrieveSelectedReport(_proxyModel->mapToSource(index).row());
+	}
 }
 
 void BRWindow::filterTable(const QString& searchPhrase)
 {
-
+	_proxyModel->setFilterRegExp(QRegExp(searchPhrase, Qt::CaseInsensitive, QRegExp::FixedString));
 }
 
 void BRWindow::customMenuRequested(const QPoint& pos)
@@ -227,7 +262,7 @@ void BRWindow::eraseItem()
 		if (selection.count() == 1)
 		{
 			QModelIndex index = selection.at(0);
-			emit deleteSelectedReport(index.row());
+			emit deleteSelectedReport(_proxyModel->mapToSource(index).row());
 		}
 	}
 }

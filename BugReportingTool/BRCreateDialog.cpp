@@ -185,12 +185,12 @@ void BRCreateDialog::generatePendingIssue()
 	_pendingIssue.setPriorityFromStr(_priority->currentText());
 	_pendingIssue.setCategoryFromStr(_category->currentText());
 
-	//Add attachments?
-	ATTACHMENTS attachemnts;
+	ATTACHMENTS attachments;
 	for (int i = 0; i < _ssvWidget->count(); ++i)
 	{
 		QPair<QString, QString> attachment(_ssvWidget->item(i)->text(), _ssvWidget->item(i)->data(Qt::UserRole).toString());
-		attachemnts.push_back(attachment);
+		attachments.push_back(attachment);
+		_pendingIssue.setAttachments(attachments);
 	}
 
 	if (_update)

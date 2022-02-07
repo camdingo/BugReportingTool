@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTableView>
+#include <QSortFilterProxyModel>
 
 #include "BRModel.h"
 #include "BRData.h"
@@ -13,7 +14,17 @@ class QMenu;
 class QLineEdit;
 class QCompleter;
 class QTextBrowser;
+class QSortFilterProxyModel;
 
+
+class ProxyModel : public QSortFilterProxyModel
+{
+public:
+	ProxyModel(QWidget* parent) : QSortFilterProxyModel(parent) {}
+
+private:
+	bool ProxyModel::filterAcceptsRow(int row, const QModelIndex& parent) const;
+};
 
 //This whole subclass was created to allow for arrow key scrolling... yea yea, i wanted this feature!
 class IssueTable : public QTableView
@@ -71,6 +82,8 @@ private:
 	//void editIssue();
 
 	bool _updatingOlder;
+
+	ProxyModel* _proxyModel;
 
 	BRCreateDialog* _createIssueDialog;
 	

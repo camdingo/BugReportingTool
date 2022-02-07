@@ -1,9 +1,11 @@
 #include "BRModel.h"
 
 #include <QDebug>
+#include <QPair>
 
 BRModel::BRModel()
 {
+	
 }
 
 int BRModel::rowCount(const QModelIndex& parent) const 
@@ -13,7 +15,7 @@ int BRModel::rowCount(const QModelIndex& parent) const
 
 int BRModel::columnCount(const QModelIndex& parent) const
 {
-	return 2;
+	return 6;
 }
 
 QVariant BRModel::data(const QModelIndex& index, int role) const
@@ -24,14 +26,26 @@ QVariant BRModel::data(const QModelIndex& index, int role) const
 	if (index.row() < 0)
 		return QVariant();
 
+	BRData issue = _data[index.row()];
+	
 	if (role == Qt::DisplayRole) 
 	{
-		BRData issue = _data[index.row()];
-
 		if (index.column() == 0)
 			return issue.getIssueNumber();
 		else if (index.column() == 1)
 			return issue.getSummary();
+	}
+	else if(role == Qt::UserRole)
+	{
+		if (index.column() == 2)
+			return issue.getDescription();
+		else if (index.column() == 3)
+			return issue.getPriorityStr();
+		else if(index.column() == 4)
+			return issue.getAffectedVersion();
+		else if (index.column() == 5)
+			return issue.getOriginator();
+
 	}
 	return QVariant();
 }
@@ -126,6 +140,17 @@ QString BRModel::getDetails(int row)
 	details += QString("<br/>");
 
 	details += QString("<b>Description: </b>") + _data[row].getDescription() + QString("<br/>");
+
+	details += QString("<br/>");
+
+	int numAttach = _data[row].getAttachments().size();
+	qDebug() << "num attach " << numAttach;
+	if (numAttach > 0)
+		details += QString("<b>Attachments: </b>") + QString("<br/>");
+
+	for (int i = 0; i < numAttach; ++i)
+		details += _data[row].getAttachments()[i].second + QString("/") + _data[row].getAttachments()[i].first + QString("<br/>");
+
 
 	return QString("<html> <body style='color:white'>") + details + QString("< / body> < / html>");
 }
